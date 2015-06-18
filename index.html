@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  	<meta chaset="utf-8">
+  	<title>practice of socket.id </title>
+  </head>
+  <body>
+    <form id="myForm">
+    	<select id="rooms">
+    		<option value="room-1">room 1</option>
+    		<option value="room-2">room 2</option>
+    	</select>
+    	<input type="text" id="name">
+    	<input type="text" id="msg">
+    	<input type="submit" value="Send!">
+    </form>
+    <ul id="logs"></ul>
+    <div id="news"></div>
+
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  	<script src="/socket.io/socket.io.js"></script>
+  	<script>
+  	  $(function(){
+  	  	var chat = io.connect('http://localhost:1337/chat'),
+  	  	  news = io.connect('http://localhost:1337/news');
+  	  	$('#myForm').submit(function(e){
+  	  		e.preventDefault();
+  	  		chat.json.emit('emit_from_client', {
+  	  			msg: $('#msg').val(),
+  	  		    name: $('#name').val(),
+  	  		    room: $('#rooms').val()
+  	  	    });
+  	  		$('#msg').val('').focus();
+  	  	})
+  	  	chat.on('emit_from_server', function(data){
+  	  		$('#logs').append($('<li>').text(data));
+  	  	});
+  	  	news.on('emit_from_server', function(data){
+  	  		$('#news').text(data);
+  	  	});
+
+
+  	  })
+  	</script>
+  </body>
+</head>
